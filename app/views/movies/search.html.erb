@@ -1,0 +1,19 @@
+<% if @local_results.any? %>
+  <h2>Local Results</h2>
+  <ul>
+    <% @local_results.each do |movie| %>
+      <li><%= movie.title %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @omdb_results.is_a?(Array) && @omdb_results.first.is_a?(Hash) %>
+  <h2>OMDb Results</h2>
+  <ul>
+    <% @omdb_results.each do |movie| %>
+      <li><%= movie["Title"] %> (<%= movie["Year"] %>)</li>
+    <% end %>
+  </ul>
+<% else %>
+  <p><%= @omdb_results.first %></p>
+<% end %>
