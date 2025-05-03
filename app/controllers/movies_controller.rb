@@ -5,9 +5,8 @@ class MoviesController < ApplicationController
   OMDB_API_KEY = ENV["OMDB_API_KEY"]
   OMDB_BASE_URL = "http://www.omdbapi.com/"
 
-
   def index
-    @movies = Movie.all
+     @movies = Movie.all
   end
 
   def show
@@ -18,9 +17,11 @@ class MoviesController < ApplicationController
   def search
     query  = params[:q]
 
-    @local_results = Movie.where("title LIKE ?", "%#{query}%")
+    @local_results = Movie.where("title LIKE ?", "%#{query}%").to_a
+    @omdb_results = []
+    existing_imdbID = @local_results.pluck(:imdb_id)
 
-    if @local_results.empty? || @local_results.size <=5
+    if @local_results.empty? || @local_results.size < 5
        uri = URI(OMDB_BASE_URL)
        uri.query = URI.encode_www_form({
         apikey: OMDB_API_KEY,
@@ -33,15 +34,25 @@ class MoviesController < ApplicationController
         omdb_data = JSON.parse(response.body)
 
         if omdb_data["Response"] == "True"
-          @omdb_results = omdb_data["Search"]
+          raw_results = omdb_data["Search"]
+          new_results = raw_results.reject { |movie| existing_imdbID.include?(movie["imdbID"]) }
+
+          @omdb_results = new_results.each do |movie|
+            Movie.create!(
+              title: movie["Title"],
+              year: movie["Year"],
+              imdb_id: movie["imdbID"],
+              source: "API",
+              fetched: Time.now
+            )
+          end
         else
-          @omdb_results = [ "No Res" ]
+          @omdb_results = []
         end
       else
         @omdb_results = [ "Error: #{response.code} - #{response.body}" ]
       end
-    else
-      @omdb_results = [ "No Local Res" ]
     end
+    render :search
   end
 end

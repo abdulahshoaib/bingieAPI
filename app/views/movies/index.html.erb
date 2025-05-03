@@ -1,9 +1,16 @@
-<h1>Movies</h1>
+<h1>All Movies</h1>
 
-<div id="movies">
+<%= form_with url: "/movies/search", method: :get, local: true do %>
+  <%= label_tag :q, "Search for a movie:" %>
+  <%= text_field_tag :q, nil, placeholder: "e.g., Interstellar" %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+<hr>
+
+<h2>Movies:</h2>
+<ul>
   <% @movies.each do |movie| %>
-    <div>
-      <%= movie.title  %>
-    </div>
+    <li><%= movie.title %> (<%= movie.year %>)</li>
   <% end %>
-</div>
+</ul>
