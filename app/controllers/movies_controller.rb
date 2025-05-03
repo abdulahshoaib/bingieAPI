@@ -1,9 +1,8 @@
 require "json"
 require "net/http"
-require "cgi"
 
 class MoviesController < ApplicationController
-  OMDB_API_KEY = CGI.escape(ENV["OMDB_API_KEY"])
+  OMDB_API_KEY = ENV["OMDB_API_KEY"]
   OMDB_BASE_URL = "http://www.omdbapi.com/"
 
 
@@ -44,6 +43,5 @@ class MoviesController < ApplicationController
     else
       @omdb_results = [ "No Local Res" ]
     end
-
   end
 end
