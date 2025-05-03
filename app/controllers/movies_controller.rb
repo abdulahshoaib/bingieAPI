@@ -16,12 +16,13 @@ class MoviesController < ApplicationController
 
   def search
     query  = params[:q]
+    is_partial_word = query.length < 3 || !query.match?(/^\w+$/)
 
     @local_results = Movie.where("title LIKE ?", "%#{query}%").to_a
     @omdb_results = []
     existing_imdbID = @local_results.pluck(:imdb_id)
 
-    if @local_results.empty? || @local_results.size < 5
+    if is_partial_word || @local_results.size < 5
        uri = URI(OMDB_BASE_URL)
        uri.query = URI.encode_www_form({
         apikey: OMDB_API_KEY,
@@ -37,7 +38,7 @@ class MoviesController < ApplicationController
           raw_results = omdb_data["Search"]
           new_results = raw_results.reject { |movie| existing_imdbID.include?(movie["imdbID"]) }
 
-          @omdb_results = new_results.each do |movie|
+          new_results.each do |movie|
             Movie.create!(
               title: movie["Title"],
               year: movie["Year"],
@@ -46,12 +47,15 @@ class MoviesController < ApplicationController
               fetched: Time.now
             )
           end
+          @omdb_results = new_results
         else
           @omdb_results = []
         end
       else
         @omdb_results = [ "Error: #{response.code} - #{response.body}" ]
       end
+    else
+
     end
     render :search
   end
