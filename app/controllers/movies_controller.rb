@@ -57,6 +57,14 @@ class MoviesController < ApplicationController
     else
 
     end
-    render :search
+    combined = @local_results + Movie.where("title LIKE ?", "%#{query}%").where(source: "api")
+    render json: combined.map { |map|
+      {
+        id: m.id,
+        title: m.title,
+        year: m.year,
+        source: m.source || "database"
+      }
+    }
   end
 end
