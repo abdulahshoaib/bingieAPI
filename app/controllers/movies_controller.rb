@@ -47,24 +47,33 @@ class MoviesController < ApplicationController
               fetched: Time.now
             )
           end
-          @omdb_results = new_results
-        else
-          @omdb_results = []
+          @omdb_results = new_results.map do |movie|
+          OpenStruct.new(
+            id: nil,  # Not known yet
+            title: movie["Title"],
+            year: movie["Year"],
+            source: "API"
+            )
+          end
         end
-      else
-        @omdb_results = [ "Error: #{response.code} - #{response.body}" ]
       end
-    else
-
     end
-    combined = @local_results + Movie.where("title LIKE ?", "%#{query}%").where(source: "api")
-    render json: combined.map { |map|
-      {
-        id: m.id,
-        title: m.title,
-        year: m.year,
-        source: m.source || "database"
-      }
+    all_results = @local_results.map { |m|
+    {
+      id: m.id,
+      title: m.title,
+      year: m.year,
+      source: m.source || "database"
     }
+  } + @omdb_results.map { |m|
+    {
+      id: nil,
+      title: m.title,
+      year: m.year,
+      source: "API"
+    }
+  }
+
+  render json: all_results
   end
 end
