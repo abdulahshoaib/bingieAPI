@@ -20,11 +20,13 @@ export default function SearchPage() {
     const [isLoading, setIsLoading] = useState(false)
 
     const handleSearch = async () => {
-        if (query.trim().length === 0) return
+        if (query.trim().length === 0)
+            return
 
+        setResults([])
         setIsLoading(true)
         try {
-            const res = await fetch('http://localhost:3000/movies/search?q=Batman', {
+            const res = await fetch(`http://localhost:3000/movies/search?q=${query}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,12 +42,13 @@ export default function SearchPage() {
 
         } finally {
             setIsLoading(false)
+            setQuery("")
         }
     }
 
     return (
         <main className="container mx-auto py-8 px-4">
-            <h1 className="text-2xl font-bold mb-6">Smart Search</h1>
+            <h1 className="text-2xl font-bold mb-6">Movie Search</h1>
 
             <div className="flex gap-2 mb-6">
                 <Input
