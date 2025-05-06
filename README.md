@@ -14,5 +14,5 @@ The frontend then parses the data into a type that is similar to the json data. 
 
 # Additionals:
 
-    - Added debounce
-    - Added circle animation on searching
+  - Added debounce
+  - Added loading animation on searching
