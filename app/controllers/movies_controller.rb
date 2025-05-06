@@ -1,5 +1,6 @@
 require "json"
 require "net/http"
+require "ostruct"
 
 class MoviesController < ApplicationController
   OMDB_API_KEY = ENV["OMDB_API_KEY"]
@@ -47,6 +48,7 @@ class MoviesController < ApplicationController
               fetched: Time.now
             )
           end
+
           @omdb_results = new_results.map do |movie|
           OpenStruct.new(
             id: nil,  # Not known yet
@@ -63,7 +65,7 @@ class MoviesController < ApplicationController
       id: m.id,
       title: m.title,
       year: m.year,
-      source: m.source || "database"
+      source: "database"
     }
   } + @omdb_results.map { |m|
     {
