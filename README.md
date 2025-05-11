@@ -16,3 +16,7 @@ The frontend then parses the data into a type that is similar to the json data. 
 
   - Added debounce
   - Added loading animation on searching
+
+# Screen Recording:
+Screen Recording of implementation
+[Screen Recording](https://drive.google.com/file/d/1IymCv81oEEu3nkiqvxWbxAgDwnLXd67t/view?usp=drive_link)

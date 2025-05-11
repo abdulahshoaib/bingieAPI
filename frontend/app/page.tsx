@@ -10,7 +10,6 @@ import { Loader2 } from "lucide-react"
 interface SearchResult {
     id: string
     title: string
-    description: string
     source: "database" | "api"
 }
 
@@ -76,16 +75,14 @@ export default function SearchPage() {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Title</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>Source</TableHead>
+                            <TableHead className="text-right">Source</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {results.map((result) => (
-                            <TableRow key={result.id}>
+                        {results.map((result, index) => (
+                            <TableRow key={result.id ?? `fallback-${index}`}>
                                 <TableCell className="font-medium">{result.title}</TableCell>
-                                <TableCell>{result.description}</TableCell>
-                                <TableCell>
+                                <TableCell className="text-right">
                                     <Badge variant={result.source === "database" ? "secondary" : "default"}>
                                         {result.source === "database" ? "Database" : "API"}
                                     </Badge>
